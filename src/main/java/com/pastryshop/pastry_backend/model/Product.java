@@ -15,9 +15,11 @@ public class Product {
     private String id;
 
     private String name;
-    private String image; // path or base64
-    private double buyPrice;
-    private double sellPrice;
-    private int quantitySold;
-    private double benefit;
+    private String image;
+
+    private Double buyPrice;
+    private Double sellPrice;
+
+    private Integer quantitySold;
+    private Double benefit;
 }

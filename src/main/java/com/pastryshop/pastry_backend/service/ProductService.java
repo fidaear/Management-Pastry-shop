@@ -19,7 +19,7 @@ public class ProductService {
 
     public Product addProduct(Product product) {
         product.setQuantitySold(0);
-        product.setBenefit(0);
+        product.setBenefit(0.0);
         return repository.save(product);
     }
 
