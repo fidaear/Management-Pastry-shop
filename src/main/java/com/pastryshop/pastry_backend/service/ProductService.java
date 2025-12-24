@@ -5,6 +5,10 @@ package com.pastryshop.pastry_backend.service;
 import com.pastryshop.pastry_backend.model.Product;
 import com.pastryshop.pastry_backend.repository.ProductRepository;
 import org.springframework.stereotype.Service;
+import com.pastryshop.pastry_backend.DTO.ProductStats;
+import java.util.List;
+
+
 
 import java.util.List;
 
@@ -41,10 +45,29 @@ public class ProductService {
     }
 
     public Product sellProduct(String id, int quantity) {
+        if (quantity <= 0) {
+            throw new RuntimeException("Quantity must be positive");
+        }
+
         Product product = repository.findById(id).orElseThrow();
-        product.setQuantitySold(product.getQuantitySold() + quantity);
+
+        int sold = product.getQuantitySold() == null ? 0 : product.getQuantitySold();
+        product.setQuantitySold(sold + quantity);
+
         double benefit = (product.getSellPrice() - product.getBuyPrice()) * product.getQuantitySold();
         product.setBenefit(benefit);
+
         return repository.save(product);
     }
+    public List<ProductStats> productStats() {
+        return repository.findAll().stream()
+                .map(p -> new ProductStats(
+                        p.getName(),
+                        p.getQuantitySold() == null ? 0 : p.getQuantitySold(),
+                        p.getBenefit() == null ? 0 : p.getBenefit()
+                ))
+                .toList(); // Java 16+
+    }
+
+
 }
