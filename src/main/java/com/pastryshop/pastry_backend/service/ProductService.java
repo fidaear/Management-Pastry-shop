@@ -1,73 +1,30 @@
 package com.pastryshop.pastry_backend.service;
 
-
-
 import com.pastryshop.pastry_backend.model.Product;
-import com.pastryshop.pastry_backend.repository.ProductRepository;
-import org.springframework.stereotype.Service;
-import com.pastryshop.pastry_backend.DTO.ProductStats;
-import java.util.List;
-
-
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
-@Service
-public class ProductService {
+public interface ProductService {
 
-    private final ProductRepository repository;
+    Product createProduct(Product product, MultipartFile imageFile);
 
-    public ProductService(ProductRepository repository) {
-        this.repository = repository;
-    }
+    Product updateProduct(String id, Product product, MultipartFile imageFile);
 
-    public Product addProduct(Product product) {
-        product.setQuantitySold(0);
-        product.setBenefit(0.0);
-        return repository.save(product);
-    }
+    void deleteProduct(String id);
 
-    public List<Product> getAllProducts() {
-        return repository.findAll();
-    }
+    Product getProductById(String id);
 
-    public Product updateProduct(String id, Product updated) {
-        Product product = repository.findById(id).orElseThrow();
-        product.setName(updated.getName());
-        product.setBuyPrice(updated.getBuyPrice());
-        product.setSellPrice(updated.getSellPrice());
-        product.setImage(updated.getImage());
-        return repository.save(product);
-    }
+    List<Product> getAllProducts();
 
-    public void deleteProduct(String id) {
-        repository.deleteById(id);
-    }
+    List<Product> getProductsByCategory(String category);
 
-    public Product sellProduct(String id, int quantity) {
-        if (quantity <= 0) {
-            throw new RuntimeException("Quantity must be positive");
-        }
+    List<Product> searchProducts(String keyword);
 
-        Product product = repository.findById(id).orElseThrow();
+    Map<String, Object> getProductStats();
 
-        int sold = product.getQuantitySold() == null ? 0 : product.getQuantitySold();
-        product.setQuantitySold(sold + quantity);
+    List<Product> getLowStockProducts(Integer threshold);
 
-        double benefit = (product.getSellPrice() - product.getBuyPrice()) * product.getQuantitySold();
-        product.setBenefit(benefit);
-
-        return repository.save(product);
-    }
-    public List<ProductStats> productStats() {
-        return repository.findAll().stream()
-                .map(p -> new ProductStats(
-                        p.getName(),
-                        p.getQuantitySold() == null ? 0 : p.getQuantitySold(),
-                        p.getBenefit() == null ? 0 : p.getBenefit()
-                ))
-                .toList(); // Java 16+
-    }
-
-
+    byte[] exportProductsToExcel();
 }
