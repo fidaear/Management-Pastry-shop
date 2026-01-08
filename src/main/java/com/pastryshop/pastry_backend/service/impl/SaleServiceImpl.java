@@ -55,9 +55,15 @@ public class SaleServiceImpl implements SaleService {
             }
 
             // Fill SaleItem snapshot
-            item.setProductName(product.getName());
             item.setSellingPrice(product.getSellingPrice());
             item.setPurchasePrice(product.getPurchasePrice());
+
+            product.setQuantity(product.getQuantity() - item.getQuantity());
+            product.setNumberOfSales(
+                    product.getNumberOfSales() + item.getQuantity()
+            );
+
+            product.updateTotalBenefit(item.getQuantity());
 
             /* ========================= */
             /* UPDATE PRODUCT DATA       */

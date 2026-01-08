@@ -8,23 +8,24 @@ import java.util.Map;
 
 public interface ProductService {
 
-    Product createProduct(Product product, MultipartFile imageFile);
+    /* CREATE */
+    Product createProduct(Product product, MultipartFile image);
 
-    Product updateProduct(String id, Product product, MultipartFile imageFile);
-
-    void deleteProduct(String id);
-
-    Product getProductById(String id);
-
+    /* READ */
     List<Product> getAllProducts();
-
-    List<Product> getProductsByCategory(String category);
-
+    Product getProductById(String id);
     List<Product> searchProducts(String keyword);
-
-    Map<String, Object> getProductStats();
-
     List<Product> getLowStockProducts(Integer threshold);
 
+    /* UPDATE */
+    Product updateProduct(String id, Product product, MultipartFile image);
+
+    /* DELETE */
+    void deleteProduct(String id);
+
+    /* STATS */
+    Map<String, Object> getProductStats();
+
+    /* EXPORT */
     byte[] exportProductsToExcel();
 }

@@ -1,47 +1,91 @@
 package com.pastryshop.pastry_backend.controller;
 
-
-
-
 import com.pastryshop.pastry_backend.model.Product;
 import com.pastryshop.pastry_backend.service.ProductService;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/products")
 @CrossOrigin("*")
 public class ProductController {
 
-    private final ProductService service;
+    private final ProductService productService;
 
-    public ProductController(ProductService service) {
-        this.service = service;
+    public ProductController(ProductService productService) {
+        this.productService = productService;
     }
 
-    @PostMapping
-    public Product add(@RequestBody Product product) {
-        return service.addProduct(product);
+    /* ================= CREATE ================= */
+
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Product> createProduct(
+            @RequestPart("product") Product product,
+            @RequestPart(value = "image", required = false) MultipartFile image) {
+
+        return ResponseEntity.ok(
+                productService.createProduct(product, image)
+        );
     }
+
+    /* ================= READ ================= */
 
     @GetMapping
     public List<Product> getAll() {
-        return service.getAllProducts();
+        return productService.getAllProducts();
     }
 
-    @PutMapping("/{id}")
-    public Product update(@PathVariable String id, @RequestBody Product product) {
-        return service.updateProduct(id, product);
+    @GetMapping("/{id}")
+    public Product getById(@PathVariable String id) {
+        return productService.getProductById(id);
     }
+
+
+
+    @GetMapping("/search")
+    public List<Product> search(@RequestParam String keyword) {
+        return productService.searchProducts(keyword);
+    }
+
+    @GetMapping("/low-stock")
+    public List<Product> lowStock(@RequestParam(defaultValue = "10") Integer threshold) {
+        return productService.getLowStockProducts(threshold);
+    }
+
+    /* ================= UPDATE ================= */
+
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Product updateProduct(
+            @PathVariable String id,
+            @RequestPart("product") Product product,
+            @RequestPart(value = "image", required = false) MultipartFile image) {
+
+        return productService.updateProduct(id, product, image);
+    }
+
+    /* ================= DELETE ================= */
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable String id) {
-        service.deleteProduct(id);
+        productService.deleteProduct(id);
     }
 
-    @PostMapping("/{id}/sell/{quantity}")
-    public Product sell(@PathVariable String id, @PathVariable int quantity) {
-        return service.sellProduct(id, quantity);
+    /* ================= STATS ================= */
+
+    @GetMapping("/stats")
+    public Map<String, Object> stats() {
+        return productService.getProductStats();
+    }
+
+    /* ================= EXPORT ================= */
+
+    @GetMapping("/export/excel")
+    public byte[] exportExcel() {
+        return productService.exportProductsToExcel();
     }
 }
