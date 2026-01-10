@@ -12,19 +12,37 @@ public class Product {
     private String id;
 
     private String name;
+    private double purchasePrice;
+    private double sellingPrice;
+    private int quantity;
     private String image;
 
-    // Prices
-    private double purchasePrice;   // buy price
-    private double sellingPrice;    // sell price
+    private int numberOfSales = 0;
+    private double totalBenefit = 0;
 
-    // Stock
-    private int quantity;            // available stock
+    private boolean active = true;
+    public boolean isActive() {
+        return active;
+    }
 
-    // Statistics
-    private int numberOfSales;       // total sold units
-    private double totalBenefit;     // total profit
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+    // ===== getters & setters =====
 
+
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public void setActive(boolean active) {
+        this.isActive = active;
+    }
     /* ========================= */
     /* BUSINESS METHODS          */
     /* ========================= */
